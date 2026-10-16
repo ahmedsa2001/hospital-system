@@ -1,0 +1,8 @@
+{
+  "name": "hospital-system",
+  "version": "1.0.0",
+  "description": "نظام حجز المشفى - نسخة تجريبية",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
