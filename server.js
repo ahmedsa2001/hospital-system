@@ -126,8 +126,13 @@ const server = http.createServer(async (req, res) => {
       return send(res, 404, { error: "not found" });
     }
     if (p === "/healthz") { res.writeHead(200); return res.end("ok"); }
-    const html = fs.readFileSync(path.join(__dirname, "public", "index.html"));
-    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" }); res.end(html);
+    const MIME = { ".html": "text/html; charset=utf-8", ".png": "image/png", ".webmanifest": "application/manifest+json; charset=utf-8", ".json": "application/json", ".ico": "image/x-icon", ".svg": "image/svg+xml" };
+    const root = path.join(__dirname, "public");
+    let file = path.normalize(path.join(root, p === "/" ? "index.html" : decodeURIComponent(p)));
+    if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) file = path.join(root, "index.html");
+    const ext = path.extname(file).toLowerCase();
+    res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream", "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=86400" });
+    res.end(fs.readFileSync(file));
   } catch (e) { send(res, 500, { error: "server" }); }
 });
 server.listen(PORT, () => console.log("running on " + PORT));

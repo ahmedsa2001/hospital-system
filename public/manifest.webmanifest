@@ -1,0 +1,17 @@
+{
+  "name": "تطبيق المشفى",
+  "short_name": "المشفى",
+  "description": "احجز موعدك وتواصل مع إدارة المشفى",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef4f4",
+  "theme_color": "#2a8c8c",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
