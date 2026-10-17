@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تطبيق المشفى</title>
+<meta name="theme-color" content="#2a8c8c">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#eef4f4;--card:#fff;--text:#1e2f3a;--muted:#66808c;--line:#dbe7e8;
+  --brand:#2a8c8c;--brand-soft:#e3f2f1;--danger:#d4574a;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#101b1f;--card:#18272c;--text:#e6f0f1;--muted:#8fa8ae;--line:#26383e;--brand:#4fb8b4;--brand-soft:#173338;--danger:#ef7468}
+}
+:root[data-theme="dark"]{--bg:#101b1f;--card:#18272c;--text:#e6f0f1;--muted:#8fa8ae;--line:#26383e;--brand:#4fb8b4;--brand-soft:#173338;--danger:#ef7468}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Cairo","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.6}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{width:46px;height:46px;border-radius:14px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:24px}
+header h1{font-size:19px;margin:0}
+header p{margin:0;color:var(--muted);font-size:13px}
+.notice{background:var(--brand-soft);border-radius:14px;padding:10px 14px;font-size:14px;margin-bottom:14px}
+.sos{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--danger);color:#fff;text-decoration:none;font-weight:700;font-size:17px;padding:14px;border-radius:16px;margin-bottom:18px}
+h2{font-size:17px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 8px;text-align:center;font:inherit;color:var(--text);cursor:pointer}
+.sp .ic{font-size:28px;display:block}
+.sp b{display:block;font-size:15px}
+.sp small{color:var(--muted)}
+.back{border:0;background:none;color:var(--brand);font:inherit;font-size:15px;font-weight:600;padding:0;margin-bottom:10px;cursor:pointer}
+.doc{display:flex;gap:12px;align-items:center;width:100%;text-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;font:inherit;color:var(--text);cursor:pointer}
+.av{flex:none;width:52px;height:52px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;font-size:26px}
+.doc b{display:block;font-size:16px}
+.doc small{color:var(--muted);display:block}
+.arrow{margin-inline-start:auto;color:var(--muted);font-size:20px}
+.prof{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;text-align:center}
+.prof .av{margin:0 auto 8px;width:64px;height:64px;font-size:32px}
+.prof b{font-size:18px}
+.prof small{display:block;color:var(--muted)}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px}
+.day{flex:none;width:64px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;border-radius:14px;padding:8px 0;text-align:center;cursor:pointer}
+.day span{display:block;font-size:12px;color:var(--muted)}
+.day b{display:block;font-size:18px}
+.day.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.day.on span{color:#fff}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.slot{border:1px solid var(--brand);color:var(--brand);background:transparent;font:inherit;font-size:14px;padding:8px 0;border-radius:12px;cursor:pointer}
+.slot.on{background:var(--brand);color:#fff}
+.slot:disabled{border-color:var(--line);color:var(--muted);text-decoration:line-through;cursor:not-allowed;opacity:.6}
+.hint{color:var(--muted);font-size:13px;margin:0 0 8px}
+.btn{width:100%;margin-top:8px;border:0;background:var(--brand);color:#fff;font:inherit;font-weight:700;font-size:16px;padding:13px;border-radius:14px;cursor:pointer}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--muted);margin-top:4px}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.sheet-bg.open{display:flex}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet h3{margin:0 0 4px;font-size:18px}
+.sheet p{margin:0 0 10px;color:var(--muted);font-size:14px}
+label{display:block;font-size:14px;margin:10px 0 4px}
+input{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text)}
+.ok{text-align:center}
+.ok .tick{font-size:46px}
+.ok .sum{background:var(--brand-soft);border-radius:12px;padding:10px;margin-top:10px;font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0 6px}
+
+.wrap{padding-bottom:96px}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+.nav button{flex:1;position:relative;border:0;background:none;color:var(--muted);font:inherit;font-size:20px;padding:8px 0 6px;cursor:pointer}
+.nav button span{display:block;font-size:11px}
+.nav button.on{color:var(--brand);font-weight:700}
+.nav i{position:absolute;top:4px;inset-inline-start:50%;margin-inline-start:6px;background:var(--danger);color:#fff;font-style:normal;font-size:11px;min-width:18px;height:18px;line-height:18px;border-radius:9px;display:none}
+#toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translate(-50%,-200%);transition:transform .3s;background:var(--brand);color:#fff;padding:10px 16px;border-radius:14px;font-size:14px;z-index:20;max-width:92%;text-align:center}
+#toast.show{transform:translate(-50%,0)}
+.bk{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.bk.off{opacity:.55}
+.bk b{display:block}
+.bk small{color:var(--muted);display:block;margin-bottom:8px}
+.acts{display:flex;gap:8px}
+.mini{flex:1;border:1px solid var(--brand);background:transparent;color:var(--brand);font:inherit;font-size:14px;padding:8px;border-radius:12px;cursor:pointer}
+.mini.dng{border-color:var(--danger);color:var(--danger)}
+.tag{color:var(--danger);font-size:13px}
+.chat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;height:calc(100vh - 290px);height:calc(100dvh - 290px);min-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.msg{max-width:82%;padding:8px 12px;border-radius:14px;font-size:15px}
+.msg small{display:block;font-size:11px;opacity:.7}
+.msg.me{align-self:flex-start;background:var(--brand);color:#fff}
+.msg.sec{align-self:flex-end;background:var(--brand-soft)}
+.qs{display:flex;gap:8px;overflow-x:auto;margin-bottom:10px}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:13px;padding:5px 14px;border-radius:999px;cursor:pointer}
+.row{display:flex;gap:8px}
+.send{border:0;background:var(--brand);color:#fff;font:inherit;font-weight:700;padding:0 18px;border-radius:12px;cursor:pointer}
+.nt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:8px;font-size:14px}
+.nt small{display:block;color:var(--muted);font-size:12px}
+.sel{width:100%;font:inherit;font-size:16px;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--text);margin-bottom:14px}
+.doc,.bk,.nt,.prof,.chat,.sel,.day{box-shadow:0 1px 3px rgba(20,50,60,.07)}
+.logo{background:linear-gradient(135deg,var(--brand),#5cc3b8)}
+.back{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand);border:0;border-radius:999px;padding:6px 16px 6px 12px;font:inherit;font-weight:600;font-size:14px;margin-bottom:14px;cursor:pointer}
+.back::before{content:"›";font-size:22px;line-height:1}
+.btn.ghost{background:var(--brand-soft);color:var(--brand);margin-top:8px}
+.nav button.on::after{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--brand)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+a.mini{text-align:center;text-decoration:none;display:block}
+textarea.sel{resize:vertical;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="hdr">
+    <div class="logo">🏥</div>
+    <div><h1>مشفى [اسم المشفى]</h1><p>احجز موعدك بسهولة من هاتفك</p></div>
+  </header>
+  <div id="view"></div>
+  <footer>نموذج تجريبي — البيانات والأرقام للعرض فقط</footer>
+</div>
+<div id="toast"></div>
+<nav class="nav"><button id="t-home" class="on" onclick="home()">🏠<span>الرئيسية</span></button><button id="t-book" onclick="showBookings()">📅<span>حجوزاتي</span></button><button id="t-chat" onclick="showChat()">💬<span>السكرتيرة</span></button><button id="t-admin" onclick="showAdmin()" style="display:none">⚙️<span>الإدارة</span></button><button id="t-notifs" onclick="showNotifs()">🔔<span>الإشعارات</span><i id="bdg"></i></button><button id="t-out" onclick="logout()">🚪<span>خروج</span></button></nav>
+<div class="sheet-bg" id="bg"><div class="sheet" id="sheet"></div></div>
+
+<script>
+// d = أيام الدوام (0=الأحد ... 6=السبت)، f/t = من/إلى (ساعة 24)
+var SPECS = [
+  {n:"باطنية", i:"🩺"}, {n:"أطفال", i:"🧒"}, {n:"نسائية وتوليد", i:"🤰"},
+  {n:"عظام", i:"🦴"}, {n:"قلبية", i:"❤️"}, {n:"عيون", i:"👁️"},
+  {n:"أذن وأنف وحنجرة", i:"👂"}, {n:"جلدية", i:"🧴"}, {n:"مسالك بولية", i:"💧"}, {n:"أسنان", i:"🦷"}
+];
+var DOCS = [
+  {n:"د. أحمد الكردي", s:"باطنية", e:"👨‍⚕️", d:[6,1,3], f:15, t:24},
+  {n:"د. زانا عبدالله", s:"باطنية", e:"👨‍⚕️", d:[0,2,4], f:15, t:24},
+  {n:"د. سارة محمود", s:"أطفال", e:"👩‍⚕️", d:[0,3], f:15, t:24},
+  {n:"د. ليلى إبراهيم", s:"أطفال", e:"👩‍⚕️", d:[6,2], f:15, t:24},
+  {n:"د. هيفاء علي", s:"نسائية وتوليد", e:"👩‍⚕️", d:[1,2,4], f:15, t:24},
+  {n:"د. نرمين قادر", s:"نسائية وتوليد", e:"👩‍⚕️", d:[6,0,3], f:15, t:24},
+  {n:"د. كاروان حسن", s:"عظام", e:"👨‍⚕️", d:[2,3,4], f:15, t:24},
+  {n:"د. بنار سليمان", s:"عظام", e:"👩‍⚕️", d:[6,1], f:15, t:24},
+  {n:"د. دلشاد رشيد", s:"قلبية", e:"👨‍⚕️", d:[0,2], f:15, t:24},
+  {n:"د. شيرين طاهر", s:"قلبية", e:"👩‍⚕️", d:[1,4], f:15, t:24},
+  {n:"د. ريبوار فاروق", s:"عيون", e:"👨‍⚕️", d:[6,3], f:15, t:24},
+  {n:"د. أمل صالح", s:"عيون", e:"👩‍⚕️", d:[0,4], f:15, t:24},
+  {n:"د. هوكر جمال", s:"أذن وأنف وحنجرة", e:"👨‍⚕️", d:[1,3], f:15, t:24},
+  {n:"د. سوزان نوري", s:"أذن وأنف وحنجرة", e:"👩‍⚕️", d:[6,2], f:15, t:24},
+  {n:"د. رزگار أمين", s:"جلدية", e:"👨‍⚕️", d:[0,3], f:15, t:24},
+  {n:"د. ديلان ياسين", s:"جلدية", e:"👩‍⚕️", d:[1,4], f:15, t:24},
+  {n:"د. سامان خالد", s:"مسالك بولية", e:"👨‍⚕️", d:[6,2], f:15, t:24},
+  {n:"د. آراس عمر", s:"مسالك بولية", e:"👨‍⚕️", d:[0,4], f:15, t:24},
+  {n:"د. ژيان كريم", s:"أسنان", e:"👩‍⚕️", d:[6,0,1], f:15, t:24},
+  {n:"د. تارا محمد", s:"أسنان", e:"👩‍⚕️", d:[2,3,4], f:15, t:24}
+];
+var DN = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+var MN = ["كانون الثاني","شباط","آذار","نيسان","أيار","حزيران","تموز","آب","أيلول","تشرين الأول","تشرين الثاني","كانون الأول"];
+var view = document.getElementById("view");
+var bg = document.getElementById("bg");
+var sheet = document.getElementById("sheet");
+var spec = null, doc = null, selDate = null, selTime = null, editId = null, tab = "home";
+var bookings = [], notifs = [], chat = [], unread = 0, chatBox = null;
+var seen = {};
+try{ var sv = JSON.parse(localStorage.getItem("hosp_demo2") || "null"); if(sv){ bookings = sv.b || []; notifs = sv.n || []; chat = sv.c || []; unread = sv.u || 0; seen = sv.se || {}; } }catch(e){}
+function save(){ try{ localStorage.setItem("hosp_demo2", JSON.stringify({b:bookings, n:notifs, c:chat, u:unread, se:seen})); }catch(e){} }
+function nowT(){ var x = new Date(); return fmt(x.getHours(), x.getMinutes()); }
+function p2(n){ return n < 10 ? "0" + n : "" + n; }
+function lbl(ts){ var x = new Date(ts); return DN[x.getDay()] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(); }
+function toast(msg){ var t = document.getElementById("toast"); t.textContent = "🔔 " + msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(function(){ t.classList.remove("show"); }, 3500); }
+function badge(){ var b = document.getElementById("bdg"); b.textContent = unread; b.style.display = unread ? "inline-block" : "none"; }
+function notify(msg){ notifs.unshift({m:msg, t:nowT()}); if(tab !== "notifs") unread++; save(); badge(); toast(msg); }
+function setTab(t){ tab = t; ["home","book","chat","notifs","admin"].forEach(function(k){ document.getElementById("t-" + k).classList.toggle("on", k === t); }); document.getElementById("hdr").style.display = (t === "home") ? "" : "none"; }
+
+function showBookings(){
+  setTab("book"); editId = null;
+  view.innerHTML = "<h2>حجوزاتي</h2>";
+  if(!bookings.length){ view.appendChild(el("p", "hint", "لا توجد حجوزات بعد. احجز موعدك الأول من الصفحة الرئيسية.")); return; }
+  bookings.forEach(function(b){
+    var c = el("div", "bk" + (b.st === "x" ? " off" : ""));
+    c.innerHTML = "<b></b><small></small>" + (b.st === "x" ? '<span class="tag">ملغى</span>' : '<div class="acts"><button class="mini">تغيير الموعد</button><button class="mini dng">إلغاء الحجز</button></div>');
+    c.querySelector("b").textContent = b.doc + " — " + b.spec;
+    c.querySelector("small").textContent = lbl(b.ts) + " — " + b.time;
+    if(b.st !== "x"){
+      var bs = c.querySelectorAll("button");
+      bs[0].onclick = function(){ editId = b.id; profile(DOCS.filter(function(d){ return d.n === b.doc; })[0]); };
+      bs[1].onclick = function(){
+        sheet.innerHTML = '<h3>إلغاء الحجز</h3><p></p><button class="btn" id="yes" style="background:var(--danger)">نعم، إلغاء الحجز</button><button class="btn ghost" id="no">رجوع</button>';
+        sheet.querySelector("p").textContent = b.doc + " — " + lbl(b.ts) + " " + b.time;
+        document.getElementById("no").onclick = closeSheet;
+        document.getElementById("yes").onclick = function(){ b.st = "x"; save(); dropSlot(b.k); syncBookings(); closeSheet(); notify("تم إلغاء حجزك مع " + b.doc + " — " + lbl(b.ts) + " " + b.time); showBookings(); };
+        bg.classList.add("open");
+      };
+    }
+    view.appendChild(c);
+  });
+  window.scrollTo(0, 0);
+}
+
+var DB = null, UID = null, ADMIN = false, slotsTaken = {}, chatReady = false, bookReady = false;
+var aBook = [], aChat = [], aCast = [], aSub = "book", aOpen = null, aBody = null, aBox = null, selKey = null, lastUnreadA = 0;
+function cloudOn(){ return !!UID && !ADMIN; }
+function txt(tag, cls, t){ var x = el(tag, cls); x.textContent = t; return x; }
+function isSec(m){ return m.f === "s"; }
+function uname(){ return ME ? ME.name : (bookings.length ? bookings[0].name : "مريض"); }
+function slotKeyOf(i, ts, mins){ return "s" + ts + "_" + i + "_" + mins; }
+function syncBookings(){ if(!cloudOn()) return; pend++; api("POST", "/api/bookings", {uid:UID, name:uname(), list:bookings}).catch(function(e){ if(e && e.status === 409) toast("هذا الوقت حُجز للتو، اختر وقتاً آخر"); }).then(function(){ pend--; poll(); }); }
+function putSlot(k){}
+function dropSlot(k){}
+
+function drawChat(){
+  if(!chatBox || tab !== "chat") return;
+  chatBox.innerHTML = "";
+  if(!chat.length) chatBox.appendChild(txt("div", "msg sec", "أهلاً بك. اكتب رسالتك وستردّ عليك إدارة المشفى مباشرة."));
+  chat.forEach(function(m){
+    var d = el("div", "msg " + (m.f === "me" ? "me" : "sec"));
+    d.textContent = m.x; d.appendChild(el("small", null, m.t)); chatBox.appendChild(d);
+  });
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+function send(text){
+  text = (text || "").trim(); if(!text) return;
+  chat.push({f:"me", x:text, t:nowT()}); save(); drawChat();
+  if(cloudOn()) api("POST", "/api/chat", {uid:UID, name:uname(), text:text, t:chat[chat.length - 1].t}).catch(function(){ toast("تعذر إرسال الرسالة"); });
+}
+
+var ME = null, TOKEN = null, pollT = null, pend = 0, lastSig = "";
+function api(method, url, data){
+  return fetch(url, {method:method, headers:{"Content-Type":"application/json", "x-token":TOKEN || ""}, body:data ? JSON.stringify(data) : undefined}).then(function(r){
+    return r.json().catch(function(){ return {}; }).then(function(j){ if(!r.ok){ throw {status:r.status, j:j}; } return j; });
+  });
+}
+function chrome(mode){
+  document.querySelector(".nav").style.display = mode === "login" ? "none" : "";
+  ["home", "book", "chat", "notifs"].forEach(function(k){ document.getElementById("t-" + k).style.display = mode === "patient" ? "" : "none"; });
+  document.getElementById("t-admin").style.display = mode === "admin" ? "" : "none";
+}
+function stopPoll(){ if(pollT){ clearInterval(pollT); pollT = null; } }
+function startPoll(){ stopPoll(); poll(); pollT = setInterval(poll, 3000); }
+function boot(){
+  try{ ME = JSON.parse(localStorage.getItem("hosp_me") || "null"); TOKEN = sessionStorage.getItem("hosp_tok"); }catch(e){}
+  if(sessionStorage.getItem("hosp_out")) return showLogin();
+  if(TOKEN) enterAdmin(); else if(ME) enterPatient(); else showLogin();
+}
+function enterPatient(){ ADMIN = false; UID = ME.uid; chatReady = false; chrome("patient"); home(); startPoll(); }
+function enterAdmin(){ ADMIN = true; UID = null; chrome("admin"); aSub = "book"; showAdmin(); startPoll(); }
+function logout(){
+  stopPoll(); sessionStorage.removeItem("hosp_tok"); sessionStorage.setItem("hosp_out", "1");
+  TOKEN = null; ADMIN = false; UID = null; showLogin();
+}
+function showLogin(){
+  chrome("login"); stopPoll(); setTab("home"); document.getElementById("hdr").style.display = "";
+  view.innerHTML = "";
+  var c = el("div", "prof", "<b>أهلاً بك</b><small>اختر طريقة الدخول</small>"); view.appendChild(c);
+  var b1 = el("button", "btn", "تسجيل كمراجع");
+  b1.onclick = function(){ if(ME){ sessionStorage.removeItem("hosp_out"); enterPatient(); } else showRegister(); };
+  var b2 = el("button", "btn ghost", "تعليمات"); b2.onclick = showHelp;
+  view.appendChild(b1); view.appendChild(b2);
+}
+function showRegister(){
+  view.innerHTML = "";
+  var back = el("button", "back", "رجوع"); back.onclick = showLogin; view.appendChild(back);
+  view.appendChild(el("h2", null, "تسجيل كمراجع"));
+  var box = el("div", "bk", '<label for="rn">الاسم الكامل</label><input id="rn" autocomplete="name"><label for="rp">رقم الهاتف</label><input id="rp" type="tel" inputmode="tel" autocomplete="tel"><p id="re" style="color:var(--danger);margin:8px 0 0"></p>');
+  var go = el("button", "btn", "دخول");
+  go.onclick = function(){
+    var n = document.getElementById("rn").value.trim(), p = document.getElementById("rp").value.trim();
+    if(!n || !p){ document.getElementById("re").textContent = "الرجاء إدخال الاسم ورقم الهاتف"; return; }
+    ME = {uid:"p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), name:n, phone:p};
+    try{ localStorage.setItem("hosp_me", JSON.stringify(ME)); }catch(e){}
+    sessionStorage.removeItem("hosp_out"); enterPatient();
+  };
+  box.appendChild(go); view.appendChild(box);
+}
+function showHelp(){
+  view.innerHTML = "";
+  var back = el("button", "back", "رجوع"); back.onclick = showLogin; view.appendChild(back);
+  view.appendChild(el("h2", null, "تعليمات دخول الإدارة"));
+  view.appendChild(el("div", "notice", "اسم المستخدم: <b>2001</b><br>كلمة المرور: <b>2001</b>"));
+  var box = el("div", "bk", '<label for="au">اسم المستخدم</label><input id="au" inputmode="numeric" autocomplete="username"><label for="ap">كلمة المرور</label><input id="ap" type="password" inputmode="numeric" autocomplete="current-password"><p id="ae" style="color:var(--danger);margin:8px 0 0"></p>');
+  var go = el("button", "btn", "دخول الإدارة");
+  go.onclick = function(){
+    var er = document.getElementById("ae");
+    api("POST", "/api/admin/login", {user:document.getElementById("au").value.trim(), pass:document.getElementById("ap").value.trim()}).then(function(r){
+      TOKEN = r.token; sessionStorage.setItem("hosp_tok", TOKEN); sessionStorage.removeItem("hosp_out"); enterAdmin();
+    }).catch(function(e){ er.textContent = (e && e.status === 429) ? "محاولات كثيرة، حاول لاحقاً" : "اسم المستخدم أو كلمة المرور غير صحيحة"; });
+  };
+  box.appendChild(go); view.appendChild(box);
+}
+function poll(){
+  if(ADMIN){
+    api("GET", "/api/admin/state").then(function(st){
+      var sig = JSON.stringify(st); var changed = sig !== lastSig; lastSig = sig;
+      aBook = st.bookings || [];
+      aChat = (st.chats || []).sort(function(x, y){ return y.ts - x.ts; });
+      aCast = (st.broadcasts || []).sort(function(x, y){ return y.ts - x.ts; });
+      var n = aChat.filter(function(c){ return c.unreadAdmin; }).length;
+      if(n > lastUnreadA) notify("رسالة جديدة من مريض");
+      lastUnreadA = n; if(changed && tab === "admin") drawAdmin();
+    }).catch(function(e){ if(e && e.status === 401) logout(); });
+    return;
+  }
+  if(!UID || pend) return;
+  api("GET", "/api/state?uid=" + encodeURIComponent(UID)).then(function(st){
+    slotsTaken = {}; (st.slots || []).forEach(function(k){ slotsTaken[k] = true; });
+    var m = st.msgs || [], had = chat.filter(isSec).length, oldLen = chat.length;
+    chat = m;
+    if(chatReady && m.filter(isSec).length > had && tab !== "chat") notify("رد جديد من إدارة المشفى");
+    chatReady = true; if(m.length !== oldLen) drawChat();
+    if(st.list && JSON.stringify(st.list) !== JSON.stringify(bookings)){
+      st.list.forEach(function(rb){
+        var lb = bookings.filter(function(x){ return x.id === rb.id; })[0];
+        if(lb && lb.st !== "x" && rb.st === "x") notify("ألغت الإدارة موعدك مع " + rb.doc + " — " + lbl(rb.ts) + " " + rb.time);
+      });
+      bookings = st.list;
+      if(tab === "book" && !editId) showBookings();
+    }
+    (st.broadcasts || []).forEach(function(b){ if(!seen[b.id]){ seen[b.id] = 1; notify("إعلان من المشفى: " + b.text); } });
+    save();
+  }).catch(function(){});
+}
+
+function adminSay(uid, name, text){ return api("POST", "/api/admin/reply", {uid:uid, text:text, t:nowT()}).then(poll).catch(function(){ toast("تعذر الإرسال"); }); }
+function adminCancel(pd, b){
+  api("POST", "/api/admin/cancel", {uid:pd.uid, id:b.id, note:"تم إلغاء موعدك مع " + b.doc + " — " + lbl(b.ts) + " " + b.time + " من قبل الإدارة.", t:nowT()}).then(poll).catch(function(){ toast("تعذر الإلغاء"); });
+}
+function askCancel(pd, b){
+  sheet.innerHTML = '<h3>إلغاء حجز مريض</h3><p></p><button class="btn" id="yes" style="background:var(--danger)">نعم، إلغاء الحجز</button><button class="btn ghost" id="no">رجوع</button>';
+  sheet.querySelector("p").textContent = b.name + " — " + b.doc + " — " + lbl(b.ts) + " " + b.time;
+  document.getElementById("no").onclick = closeSheet;
+  document.getElementById("yes").onclick = function(){ adminCancel(pd, b); closeSheet(); notify("تم إلغاء حجز " + b.name); };
+  bg.classList.add("open");
+}
+
+function showAdmin(){
+  setTab("admin"); editId = null; aBox = null;
+  view.innerHTML = "<h2>لوحة الإدارة</h2>";
+  if(!ADMIN){ view.appendChild(el("p", "hint", "هذه الصفحة لموظفي الإدارة فقط.")); return; }
+  var bar = el("div", "qs");
+  [["book", "الحجوزات"], ["chat", "المحادثات"], ["cast", "تبليغ عام"]].forEach(function(x){
+    var b = el("button", "chip" + (aSub === x[0] ? " on" : ""), x[1]);
+    b.onclick = function(){ aSub = x[0]; aOpen = null; showAdmin(); };
+    bar.appendChild(b);
+  });
+  view.appendChild(bar);
+  aBody = el("div"); view.appendChild(aBody); drawAdmin();
+  window.scrollTo(0, 0);
+}
+function drawAdmin(){
+  if(tab !== "admin" || !aBody) return;
+  if(aSub === "chat" && aOpen){ fillABox(); return; }
+  var old = document.getElementById("bt"), oldv = old ? old.value : "";
+  aBody.innerHTML = "";
+  if(aSub === "book"){
+    var all = [];
+    aBook.forEach(function(pd){ (pd.list || []).forEach(function(b){ all.push({pd:pd, b:b}); }); });
+    all.sort(function(x, y){ return x.b.ts - y.b.ts; });
+    if(!all.length) aBody.appendChild(el("p", "hint", "لا توجد حجوزات بعد."));
+    all.forEach(function(r){
+      var b = r.b, c = el("div", "bk" + (b.st === "x" ? " off" : ""));
+      c.appendChild(txt("b", null, b.name + " — " + b.phone));
+      c.appendChild(txt("small", null, b.doc + " (" + b.spec + ") — " + lbl(b.ts) + " — " + b.time));
+      if(b.st === "x"){ c.appendChild(txt("span", "tag", "ملغى")); }
+      else {
+        var acts = el("div", "acts"), tl = txt("a", "mini", "اتصال"), cb = txt("button", "mini dng", "إلغاء الحجز");
+        tl.href = "tel:" + String(b.phone).replace(/[^0-9+]/g, "");
+        cb.onclick = function(){ askCancel(r.pd, b); };
+        acts.appendChild(tl); acts.appendChild(cb); c.appendChild(acts);
+      }
+      aBody.appendChild(c);
+    });
+  } else if(aSub === "chat"){
+    if(!aChat.length) aBody.appendChild(el("p", "hint", "لا توجد محادثات بعد."));
+    aChat.forEach(function(cd){
+      var last = (cd.msgs || [])[(cd.msgs || []).length - 1];
+      var c = el("button", "doc");
+      var box = el("div"); box.appendChild(txt("b", null, (cd.name || "مريض") + " #" + String(cd.uid).slice(-4) + (cd.unreadAdmin ? "  ●" : "")));
+      box.appendChild(txt("small", null, last ? last.x : "")); c.appendChild(box);
+      c.onclick = function(){ openAChat(cd.uid); };
+      aBody.appendChild(c);
+    });
+  } else {
+    aBody.appendChild(el("p", "hint", "يصل التبليغ إلى كل من يفتح التطبيق من المرضى."));
+    var ta = el("textarea", "sel"); ta.id = "bt"; ta.rows = 3; ta.placeholder = "اكتب نص التبليغ..."; ta.value = oldv;
+    var go = el("button", "btn", "إرسال التبليغ العام");
+    go.onclick = function(){
+      var v = ta.value.trim(); if(!v) return;
+      api("POST", "/api/admin/broadcast", {text:v}).then(function(){ ta.value = ""; toast("تم إرسال التبليغ"); poll(); }).catch(function(){ toast("تعذر الإرسال"); });
+    };
+    aBody.appendChild(ta); aBody.appendChild(go);
+    aBody.appendChild(el("h2", null, "التبليغات السابقة"));
+    aCast.forEach(function(c){ var n = txt("div", "nt", c.text); n.appendChild(el("small", null, lbl(c.ts))); aBody.appendChild(n); });
+  }
+}
+function openAChat(uid){
+  aOpen = uid; aBody.innerHTML = "";
+  var back = el("button", "back", "رجوع"); back.onclick = function(){ aOpen = null; aBox = null; drawAdmin(); }; aBody.appendChild(back);
+  aBox = el("div", "chat"); aBox.style.height = "calc(100vh - 340px)"; aBox.style.height = "calc(100dvh - 340px)"; aBody.appendChild(aBox);
+  var row = el("div", "row"); row.innerHTML = '<input id="ar" placeholder="اكتب ردّ الإدارة...">';
+  var sb = el("button", "send", "إرسال");
+  sb.onclick = function(){
+    var i = document.getElementById("ar"), v = i.value.trim(); if(!v) return;
+    var cd = aChat.filter(function(c){ return c.uid === aOpen; })[0];
+    adminSay(aOpen, cd ? cd.name : "", v); i.value = "";
+  };
+  row.appendChild(sb); aBody.appendChild(row);
+  fillABox();
+  api("POST", "/api/admin/read", {uid:uid}).catch(function(){});
+}
+function fillABox(){
+  if(!aBox) return;
+  var cd = aChat.filter(function(c){ return c.uid === aOpen; })[0];
+  var nmsg = ((cd && cd.msgs) || []).length;
+  if(aBox.dataset.n === String(nmsg)) return;
+  aBox.dataset.n = String(nmsg); aBox.innerHTML = "";
+  ((cd && cd.msgs) || []).forEach(function(m){
+    var d = el("div", "msg " + (m.f === "s" ? "me" : "sec"));
+    d.textContent = m.x; d.appendChild(el("small", null, m.t)); aBox.appendChild(d);
+  });
+  aBox.scrollTop = aBox.scrollHeight;
+}
+function showChat(){
+  setTab("chat");
+  if(!chat.length){ chat.push({f:"s", x:"أهلاً بك 👋 أنا سكرتيرة المشفى. كيف أستطيع مساعدتك؟", t:nowT()}); save(); }
+  view.innerHTML = "<h2>💬 المحادثة مع السكرتيرة</h2>";
+  chatBox = el("div", "chat"); view.appendChild(chatBox);
+  var q = el("div", "qs");
+  ["أريد تغيير موعدي", "موعد دوام الأطباء", "استفسار عن الأسعار"].forEach(function(t){ var b = el("button", "chip", t); b.onclick = function(){ send(t); }; q.appendChild(b); });
+  view.appendChild(q);
+  var row = el("div", "row"); row.innerHTML = '<input id="mi" placeholder="اكتب رسالتك...">';
+  var sb = el("button", "send", "إرسال");
+  sb.onclick = function(){ var i = document.getElementById("mi"); send(i.value); i.value = ""; };
+  row.appendChild(sb); view.appendChild(row);
+  view.appendChild(el("p", "hint", (cloudOn() ? "رسالتك تصل إلى إدارة المشفى وترد عليك مباشرة." : "هذا العرض غير متصل بنظام المشفى، لن تصل رسائلك للإدارة.")));
+  drawChat();
+}
+
+function showNotifs(){
+  setTab("notifs"); unread = 0; save(); badge();
+  view.innerHTML = "<h2>🔔 الإشعارات</h2>";
+  if(!notifs.length){ view.appendChild(el("p", "hint", "لا توجد إشعارات بعد. ستظهر هنا كل حجوزاتك وتعديلاتك وإلغاءاتك.")); return; }
+  notifs.forEach(function(n){ var c = el("div", "nt"); c.textContent = n.m; c.appendChild(el("small", null, n.t)); view.appendChild(c); });
+  var cl = el("button", "btn ghost", "مسح الإشعارات"); cl.onclick = function(){ notifs = []; save(); showNotifs(); }; view.appendChild(cl);
+  window.scrollTo(0, 0);
+}
+
+function el(tag, cls, html){ var x = document.createElement(tag); if(cls) x.className = cls; if(html != null) x.innerHTML = html; return x; }
+function fmt(h, m){ var s = (h % 24) >= 12 ? "م" : "ص"; var hh = h % 12 || 12; return hh + ":" + (m < 10 ? "0" + m : m) + " " + s; }
+function dayList(d){
+  var out = [], now = new Date();
+  for(var i = 0; i < 21 && out.length < 8; i++){
+    var x = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    if(d.d.indexOf(x.getDay()) > -1) out.push(x);
+  }
+  return out;
+}
+function slotList(d, date){
+  var out = [], now = new Date(), idx = 0;
+  for(var h = d.f; h < d.t; h++){
+    [0, 15, 30, 45].forEach(function(m){
+      var when = new Date(date.getFullYear(), date.getMonth(), date.getDate(), h, m);
+      var lab = fmt(h, m); var key = slotKeyOf(DOCS.indexOf(d), date.getTime(), h * 60 + m);
+      var eb = editId ? bookings.filter(function(x){ return x.id === editId; })[0] : null;
+      var taken = bookings.some(function(b){ return b.st !== "x" && b.doc === d.n && b.ts === date.getTime() && b.time === lab && b.id !== editId; }) || (slotsTaken[key] && !(eb && eb.k === key));
+      var past = when < now;
+      out.push({label: fmt(h, m), off: taken || past, key: key});
+      idx++;
+    });
+  }
+  return out;
+}
+
+function home(sel){
+  if(typeof sel !== "string") sel = null;
+  spec = sel; doc = null; editId = null; setTab("home");
+  view.innerHTML = "<h2>اختر الاختصاص</h2>";
+  var sl = el("select", "sel");
+  var o0 = el("option", null, "— اختر الاختصاص —"); o0.value = ""; sl.appendChild(o0);
+  SPECS.forEach(function(x){
+    var n = DOCS.filter(function(d){ return d.s === x.n; }).length;
+    var o = el("option", null, x.n + " (" + n + ")"); o.value = x.n; sl.appendChild(o);
+  });
+  sl.value = sel || "";
+  sl.onchange = function(){ home(sl.value || null); };
+  view.appendChild(sl);
+  if(!sel){ view.appendChild(el("p", "hint", "اختر الاختصاص من القائمة لعرض الأطباء المتوفرين.")); window.scrollTo(0, 0); return; }
+  view.appendChild(el("h2", null, "أطباء " + sel));
+  DOCS.filter(function(d){ return d.s === sel; }).forEach(function(d){
+    var days = d.d.map(function(x){ return DN[x]; }).join("، ");
+    var b = el("button", "doc", '<div class="av">' + d.e + '</div><div><b>' + d.n + '</b><small>الدوام: ' + days + '</small><small>من ' + fmt(d.f, 0) + ' إلى ' + fmt(d.t, 0) + '</small></div><span class="arrow">‹</span>');
+    b.onclick = function(){ profile(d); };
+    view.appendChild(b);
+  });
+}
+function doctors(s){ home(s); }
+function profile(d){
+  doc = d; selDate = null; selTime = null; setTab(editId ? "book" : "home"); document.getElementById("hdr").style.display = "none";
+  view.innerHTML = "";
+  var back = el("button", "back", "رجوع"); back.onclick = function(){ if(editId) showBookings(); else doctors(d.s); }; view.appendChild(back);
+  view.appendChild(el("div", "prof", '<div class="av">' + d.e + '</div><b>' + d.n + '</b><small>اختصاص ' + d.s + '</small><small>الدوام: ' + d.d.map(function(x){ return DN[x]; }).join("، ") + ' | ' + fmt(d.f, 0) + ' – ' + fmt(d.t, 0) + '</small>'));
+  view.appendChild(el("h2", null, "اختر التاريخ"));
+  var days = el("div", "days"); view.appendChild(days);
+  view.appendChild(el("h2", null, "اختر الوقت"));
+  var slotsBox = el("div"); view.appendChild(slotsBox);
+  var go = el("button", "btn", "متابعة الحجز"); go.disabled = true; view.appendChild(go);
+  go.onclick = function(){
+    if(editId){
+      var b = bookings.filter(function(x){ return x.id === editId; })[0];
+      var old = lbl(b.ts) + " " + b.time;
+      var oldK = b.k; b.ts = selDate.getTime(); b.time = selTime; b.k = selKey; save(); dropSlot(oldK); putSlot(selKey); syncBookings();
+      notify("تم تغيير موعدك مع " + b.doc + " من " + old + " إلى " + lbl(b.ts) + " " + b.time);
+      editId = null; showBookings();
+    } else { openSheet(); }
+  };
+  if(editId) go.textContent = "تأكيد تغيير الموعد";
+
+  function drawSlots(){
+    slotsBox.innerHTML = "";
+    if(!selDate){ slotsBox.appendChild(el("p", "hint", "اختر تاريخاً لعرض الأوقات المتاحة.")); return; }
+    var av = slotList(d, selDate).filter(function(x){ return !x.off; });
+    if(!av.length){ slotsBox.appendChild(el("p", "hint", "لا توجد أوقات متاحة في هذا اليوم، اختر يوماً آخر.")); return; }
+    slotsBox.appendChild(el("p", "hint", "تظهر الأوقات المتاحة فقط، كل ربع ساعة."));
+    var sl = el("select", "sel");
+    var o0 = el("option", null, "— اختر الوقت —"); o0.value = ""; sl.appendChild(o0);
+    av.forEach(function(x){ var o = el("option", null, x.label); o.value = x.label; sl.appendChild(o); });
+    sl.value = selTime || "";
+    sl.onchange = function(){ selTime = sl.value || null; var f = av.filter(function(x){ return x.label === sl.value; })[0]; selKey = f ? f.key : null; go.disabled = !selTime; };
+    slotsBox.appendChild(sl);
+  }
+  dayList(d).forEach(function(x, i){
+    var b = el("button", "day", '<span>' + DN[x.getDay()] + '</span><b>' + p2(x.getDate()) + '</b><span>' + p2(x.getMonth() + 1) + '/' + x.getFullYear() + '</span>');
+    b.onclick = function(){
+      selDate = x; selTime = null; go.disabled = true;
+      Array.prototype.forEach.call(days.children, function(c){ c.classList.remove("on"); });
+      b.classList.add("on"); drawSlots();
+    };
+    days.appendChild(b);
+  });
+  drawSlots();
+  window.scrollTo(0, 0);
+}
+function closeSheet(){ bg.classList.remove("open"); }
+function openSheet(){
+  var when = lbl(selDate.getTime()) + " — " + selTime;
+  sheet.innerHTML = '<h3>تأكيد الحجز</h3><p></p><label for="nm">الاسم الكامل</label><input id="nm" autocomplete="name"><label for="ph">رقم الهاتف</label><input id="ph" type="tel" inputmode="tel" autocomplete="tel"><p id="er" style="color:var(--danger);margin:8px 0 0"></p><button class="btn" id="go">تأكيد الحجز</button><button class="btn ghost" id="cx">إلغاء</button>';
+  sheet.querySelector("p").textContent = doc.n + " — " + doc.s + " — " + when;
+  if(ME){ document.getElementById("nm").value = ME.name; document.getElementById("ph").value = ME.phone; }
+  document.getElementById("cx").onclick = closeSheet;
+  document.getElementById("go").onclick = function(){
+    var nm = document.getElementById("nm").value.trim();
+    var ph = document.getElementById("ph").value.trim();
+    if(!nm || !ph){ document.getElementById("er").textContent = "الرجاء إدخال الاسم ورقم الهاتف"; return; }
+    bookings.unshift({id:Date.now(), doc:doc.n, spec:doc.s, ts:selDate.getTime(), time:selTime, name:nm, phone:ph, st:"ok", k:selKey}); save(); putSlot(selKey); syncBookings();
+    notify("تم حجز موعدك مع " + doc.n + " — " + when);
+    sheet.innerHTML = '<div class="ok"><div class="tick">✅</div><h3>تم الحجز بنجاح</h3><div class="sum"></div><button class="btn" id="done">تم</button></div>';
+    sheet.querySelector(".sum").textContent = nm + " — " + doc.n + " — " + when + " (ستصلك رسالة تذكير قبل الموعد)";
+    document.getElementById("done").onclick = function(){ closeSheet(); home(); };
+  };
+  bg.classList.add("open");
+}
+bg.addEventListener("click", function(e){ if(e.target === bg) closeSheet(); });
+badge();
+boot();
+</script>
+</body>
+</html>
